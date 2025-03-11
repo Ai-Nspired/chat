@@ -7,90 +7,52 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.0/marked.min.css">
   <style>
     .dark-mode {
-      --bg-primary: #1f2937;
+      --bg-primary: #121212;
       --text-primary: #d1d5db;
-      --bg-secondary: #374151;
+      --bg-secondary: #1e1e1e;
       --text-secondary: #9ca3af;
     }
     .light-mode {
       --bg-primary: #f3f4f6;
-      --text-primary: #1f2937;<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ai-nspired</title>
-    <style>
-        body {
-            background-color: #000; /* Dark background */
-            color: #fff; /* White text */
-            font-family: 'Georgia', serif; /* Elegant font style */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh; /* Full-height */
-            margin: 0;
-        }
-        h1 {
-            font-size: 48px; /* Title size */
-            margin: 0; /* Removes default margin */
-        }
-        .tagline {
-            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent box */
-            padding: 10px 20px; /* Padding around text */
-            border-radius: 5px; /* Rounded corners */
-            margin: 20px 0; /* Margin for spacing */
-            text-align: center; /* Center text */
-        }
-        footer {
-            position: absolute;
-            bottom: 10px; /* Stick to bottom */
-            text-align: center; /* Center the footer */
-            font-size: 14px; /* Smaller font size */
-            color: #aaa; /* Gray color for footer text */
-        }
-        nav a {
-            margin: 0 15px; /* Margin between links */
-            text-decoration: none; /* No underline */
-            color: #aaa; /* Gray color */
-        }
-    </style>
-</head>
-<body>
-    <h1>ai-nspired</h1>
-    <div class="tagline">applied justice, as above so below</div>
-    <footer>
-        <nav>
-            <a href="#">about</a>
-            <a href="#">contact</a>
-            <a href="#">terms</a>
-            <a href="#">privacy</a>
-        </nav>
-        <p>© 2025 all rights reserved</p>
-    </footer>
-</body>
-</html>
+      --text-primary: #1f2937;
       --bg-secondary: #e5e7eb;
       --text-secondary: #374151;
     }
     .green-mode {
-      --bg-primary: #064e3b;
+      --bg-primary: #022c22;
       --text-primary: #ecfdf5;
-      --bg-secondary: #065f46;
+      --bg-secondary: #033a2b;
       --text-secondary: #a7f3d0;
     }
     .blue-mode {
-      --bg-primary: #0c4a6e;
+      --bg-primary: #0c2d4a;
       --text-primary: #e0f2fe;
-      --bg-secondary: #0369a1;
+      --bg-secondary: #0e3255;
       --text-secondary: #bae6fd;
     }
     .purple-mode {
-      --bg-primary: #4c1d95;
+      --bg-primary: #280a4f;
       --text-primary: #f5f3ff;
-      --bg-secondary: #6d28d9;
+      --bg-secondary: #3b0764;
       --text-secondary: #ddd6fe;
+    }
+    .quicksilver-mode {
+      --bg-primary: #1c1c1e;
+      --text-primary: #d4d4d8;
+      --bg-secondary: #2c2c2e;
+      --text-secondary: #a1a1aa;
+    }
+    .sunset-mode {
+      --bg-primary: #1e0c15;
+      --text-primary: #ffd4b8;
+      --bg-secondary: #2d1018;
+      --text-secondary: #ffa77b;
+    }
+    .blood-mode {
+      --bg-primary: #1a0505;
+      --text-primary: #ffd1d1;
+      --bg-secondary: #2d0a0a;
+      --text-secondary: #ff9e9e;
     }
     .pulsate {
       animation: pulsate 1.5s infinite;
@@ -110,22 +72,24 @@
     }
   </style>
 </head>
-<body class="dark-mode h-screen flex items-center justify-center relative">
+<body class="dark-mode overflow-hidden m-0 p-0">
   <!-- Main Chat Interface -->
-  <div class="w-full flex h-full flex bg-[var(--bg-primary)] text-[var(--text-primary)] shadow-s rounded-s p-4 flex flex-col relative">
-    <div class="flex justify-between items-center mb-4">
-      <button id="powerButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full flex items-center justify-center"><i class="fas fa-cog text-s"></i></button>
-      <button id="historyButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full ml-2 flex items-center justify-center"><i class="fas fa-history text-s"></i></button>
+  <div class="w-screen h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] p-0 m-0 overflow-hidden">
+    <div class="flex justify-between items-center p-4">
+      <div class="flex">
+        <button id="powerButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full flex items-center justify-center"><i class="fas fa-cog text-s"></i></button>
+        <button id="historyButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full ml-2 flex items-center justify-center"><i class="fas fa-history text-s"></i></button>
+      </div>
     </div>
-    <div id="conversation" class="flex-grow bg-[var(--bg-secondary)] p-5 overflow-y-auto mb-6 text-5xl"></div>
-    <div class="flex gap-2">
+    <div id="conversation" class="flex-grow bg-[var(--bg-secondary)] p-5 overflow-y-auto text-5xl"></div>
+    <div class="flex gap-2 p-4">
       <input id="messageInput" type="text" class="flex-1 rounded-md p-2 text-black" placeholder="Type your message...">
       <button id="talkButton" class="bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-2 rounded-md text-md whitespace-nowrap">Talk</button>
     </div>
   </div>
 
   <!-- Settings Panel -->
-  <div id="applet" class="applet fixed top-0 right-0 w-100 h-full shadow-md p-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] transform translate-x-full transition-transform duration-300 overflow-y-auto">
+  <div id="applet" class="applet fixed top-0 right-0 w-1/2 h-full shadow-md p-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] transform translate-x-full transition-transform duration-300 overflow-y-auto">
     <div class="flex justify-between items-center mb-8">
       <h2 class="text-xl font-bold"></h2>
       <button id="closeSettings" class="text-xl">
@@ -137,23 +101,23 @@
     <div class="mb-4">
       <label class="block text-xs mb-2">Theme</label>
       <div class="flex space-x-2">
-        <button id="darkTheme" class="w-8 h-8 rounded-full bg-gray-800 border-2 border-transparent"></button>
+        <button id="darkTheme" class="w-8 h-8 rounded-full bg-gray-900 border-2 border-transparent"></button>
         <button id="lightTheme" class="w-8 h-8 rounded-full bg-gray-200 border-2 border-transparent"></button>
-        <button id="greenTheme" class="w-8 h-8 rounded-full bg-green-800 border-2 border-transparent"></button>
-        <button id="blueTheme" class="w-8 h-8 rounded-full bg-blue-800 border-2 border-transparent"></button>
-        <button id="purpleTheme" class="w-8 h-8 rounded-full bg-purple-800 border-2 border-transparent"></button>
+        <button id="greenTheme" class="w-8 h-8 rounded-full bg-green-900 border-2 border-transparent"></button>
+        <button id="blueTheme" class="w-8 h-8 rounded-full bg-blue-900 border-2 border-transparent"></button>
+        <button id="purpleTheme" class="w-8 h-8 rounded-full bg-purple-900 border-2 border-transparent"></button>
+        <button id="quicksilverTheme" class="w-8 h-8 rounded-full bg-zinc-800 border-2 border-transparent"></button>
+        <button id="sunsetTheme" class="w-8 h-8 rounded-full bg-orange-950 border-2 border-transparent"></button>
+        <button id="bloodTheme" class="w-8 h-8 rounded-full bg-red-950 border-2 border-transparent"></button>
       </div>
     </div>
     
-    <!-- OpenRouter API Info -->
+    <!-- OpenRouter API Info - Fix the broken structure -->
     <div class="mb-4 p-2 bg-[var(--bg-primary)] rounded-md">
-      <p class="text-xs mb-1">OpenRouter API Integration</p>
-      <div class="mb-2">
-        <label class="block text-xs mb-1">API Key</label>
-        <input id="apiKey" type="password" class="w-full border rounded-md p-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Enter your OpenRouter API key">
-        <div id="apiKeyStatus" class="text-xs mt-1 hidden"></div>
-        <button id="validateApiKey" class="mt-1 px-2 py-1 rounded-md bg-blue-600 text-white text-xs">Validate Key</button>
-      </div>
+      <label class="block text-xs mb-1">API Key</label>
+      <input id="apiKey" type="password" class="w-full border rounded-md p-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Enter your OpenRouter API key">
+      <div id="apiKeyStatus" class="text-xs mt-1 hidden"></div>
+      <button id="validateApiKey" class="mt-1 px-2 py-1 rounded-md bg-blue-600 text-white text-xs">Validate Key</button>
     </div>
     
     <!-- Model Selection -->
@@ -344,6 +308,9 @@
     const greenTheme = document.getElementById('greenTheme');
     const blueTheme = document.getElementById('blueTheme');
     const purpleTheme = document.getElementById('purpleTheme');
+    const quicksilverTheme = document.getElementById('quicksilverTheme');
+    const sunsetTheme = document.getElementById('sunsetTheme');
+    const bloodTheme = document.getElementById('bloodTheme');
 
     // ====================
     // State Variables
@@ -373,7 +340,10 @@
     // ====================
     function setTheme(themeName) {
       // Remove all possible theme classes
-      document.body.classList.remove('dark-mode', 'light-mode', 'green-mode', 'blue-mode', 'purple-mode');
+      document.body.classList.remove(
+        'dark-mode', 'light-mode', 'green-mode', 'blue-mode', 'purple-mode', 
+        'quicksilver-mode', 'sunset-mode', 'blood-mode'
+      );
       // Add the selected theme
       document.body.classList.add(themeName);
       localStorage.setItem('theme', themeName);
@@ -390,6 +360,9 @@
       greenTheme.classList.remove('border-white');
       blueTheme.classList.remove('border-white');
       purpleTheme.classList.remove('border-white');
+      quicksilverTheme.classList.remove('border-white');
+      sunsetTheme.classList.remove('border-white');
+      bloodTheme.classList.remove('border-white');
       
       // Add border to current theme
       switch(currentTheme) {
@@ -407,6 +380,15 @@
           break;
         case 'purple-mode':
           purpleTheme.classList.add('border-white');
+          break;
+        case 'quicksilver-mode':
+          quicksilverTheme.classList.add('border-white');
+          break;
+        case 'sunset-mode':
+          sunsetTheme.classList.add('border-white');
+          break;
+        case 'blood-mode':
+          bloodTheme.classList.add('border-white');
           break;
       }
     }
@@ -936,6 +918,9 @@ Current notes: ${aiNotes || "No notes yet."}`
     greenTheme.addEventListener('click', () => setTheme('green-mode'));
     blueTheme.addEventListener('click', () => setTheme('blue-mode'));
     purpleTheme.addEventListener('click', () => setTheme('purple-mode'));
+    quicksilverTheme.addEventListener('click', () => setTheme('quicksilver-mode'));
+    sunsetTheme.addEventListener('click', () => setTheme('sunset-mode'));
+    bloodTheme.addEventListener('click', () => setTheme('blood-mode'));
 
     // API Key
     validateApiKeyButton.addEventListener('click', async () => {
@@ -1155,21 +1140,35 @@ Current notes: ${aiNotes || "No notes yet."}`
       if (chatHistory.length === 0) {
         const welcomeElement = document.createElement('div');
         welcomeElement.innerHTML = marked(`
-# Welcome to AI Chat!
+# welcome to ai-nChat!
 
-To get started:
-1. Click the settings button (⚙️) in the top-left
-2. Enter your OpenRouter API Key
-3. Select a model from the dropdown
-4. Save settings
+## our mission at ai-nspired
+*pragmatic, personal, private ai — as above, so below*
 
-You can add custom models by:
-- Typing "add model" in the chat
-- Clicking the "Add Model" button in settings
-- Selecting "Add Custom Model..." from the dropdown
+ai-nChat gives you access to the best ai language models while keeping your conversations private and personalized.
 
-To change the theme, use the color buttons at the top of the settings panel.
-        `);
+### key features:
+- **model freedom**: choose from a variety of top LLMs through OpenRouter
+- **complete privacy**: all data stays on your device using local storage
+- **adaptive interface**: the more you chat, the better it understands your preferences
+- **customization**: select your theme, text size, and ai response style
+- **preserved content**: keep important instructions safe across conversations
+
+### getting started:
+1. click the settings button (⚙️) in the top-left
+2. enter your OpenRouter API key
+3. select a model (we recommend starting with liquid/lfm-7b for speed and value)
+4. customize your experience in settings
+5. start chatting!
+
+### power tips:
+- use "/system" and "/respond" commands to directly update your ai's behavior
+- save important notes with the preserved content feature
+- add custom models by typing "add model" in the chat
+- try different themes by clicking the color buttons in settings
+
+*created by [ai-nspired](https://ai-nspired.com) - where ai meets human creativity*
+  `);
         conversation.appendChild(welcomeElement);
       }
     };
