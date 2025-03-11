@@ -49,10 +49,10 @@
       --text-secondary: #ffa77b;
     }
     .blood-mode {
-      --bg-primary: #1a0505;
-      --text-primary: #ffd1d1;
-      --bg-secondary: #2d0a0a;
-      --text-secondary: #ff9e9e;
+      --bg-primary: #fcf7fa;
+      --text-primary: #6a5f76;
+      --bg-secondary: #f0e6f5;
+      --text-secondary: #af89c3;
     }
     .pulsate {
       animation: pulsate 1.5s infinite;
@@ -69,6 +69,108 @@
     .model-info {
       font-size: 0.7rem;
       color: var(--text-secondary);
+    }
+    .markdown-output {
+      font-family: Georgia, serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 1em;
+    }
+
+    .markdown-output h1, 
+    .markdown-output h2, 
+    .markdown-output h3 {
+      font-weight: normal;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      font-family: Georgia, serif;
+      letter-spacing: -0.01em;
+    }
+
+    .markdown-output h1 {
+      font-size: 1.8em;
+      border-bottom: 1px solid var(--text-secondary);
+      padding-bottom: 0.3em;
+    }
+
+    .markdown-output h2 {
+      font-size: 1.5em;
+      border-bottom: 1px solid var(--text-secondary);
+      padding-bottom: 0.2em;
+    }
+
+    .markdown-output h3 {
+      font-size: 1.3em;
+    }
+
+    .markdown-output p {
+      margin-bottom: 1em;
+    }
+
+    .markdown-output pre {
+      background-color: var(--bg-primary);
+      border-radius: 6px;
+      padding: 16px;
+      overflow: auto;
+      font-family: Consolas, Monaco, 'Andale Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    .markdown-output code {
+      font-family: Consolas, Monaco, 'Andale Mono', monospace;
+      background-color: var(--bg-primary);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    .markdown-output blockquote {
+      border-left: 4px solid var(--text-secondary);
+      padding-left: 1em;
+      margin-left: 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .markdown-output ul, 
+    .markdown-output ol {
+      padding-left: 2em;
+      margin-bottom: 1em;
+    }
+
+    .markdown-output li {
+      margin-bottom: 0.5em;
+    }
+
+    .markdown-output hr {
+      border: none;
+      border-top: 1px solid var(--text-secondary);
+      margin: 1.5em 0;
+    }
+
+    .markdown-output a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+
+    .markdown-output a:hover {
+      text-decoration: underline;
+    }
+
+    .markdown-output table {
+      border-collapse: collapse;
+      margin-bottom: 1em;
+      width: 100%;
+    }
+
+    .markdown-output th, 
+    .markdown-output td {
+      border: 1px solid var(--text-secondary);
+      padding: 8px;
+    }
+
+    .markdown-output th {
+      background-color: var(--bg-primary);
     }
   </style>
 </head>
@@ -184,6 +286,20 @@
     <div class="mb-4">
       <label class="flex items-center text-sm">
         <input id="aiSpeechToggle" type="checkbox" class="mr-2"> Enable AI Speech
+      </label>
+    </div>
+    
+    <!-- Add this in the Options section of the settings panel -->
+    <div class="mb-4">
+      <label class="flex items-center text-sm">
+        <input id="markdownToggle" type="checkbox" class="mr-2"> Use Elegant Markdown Style
+      </label>
+    </div>
+    
+    <!-- Add this to the Options section in the settings panel -->
+    <div class="mb-4">
+      <label class="flex items-center text-sm">
+        <input id="elegantModeToggle" type="checkbox" class="mr-2"> Use Elegant Typography (Georgia font)
       </label>
     </div>
     
@@ -311,6 +427,11 @@
     const quicksilverTheme = document.getElementById('quicksilverTheme');
     const sunsetTheme = document.getElementById('sunsetTheme');
     const bloodTheme = document.getElementById('bloodTheme');
+    
+    // DOM Element Connectors - add this
+    const markdownToggle = document.getElementById('markdownToggle');
+    // Add to DOM Element Connectors section
+    const elegantModeToggle = document.getElementById('elegantModeToggle');
 
     // ====================
     // State Variables
@@ -334,6 +455,11 @@
     const maxTokens = 2000;
     let tokenCount = 0;
     let messageHistory = [];
+    
+    // State Variables - add this
+    let markdownEnabled = localStorage.getItem('markdownEnabled') === 'true';
+    // Add to State Variables section
+    let elegantModeEnabled = localStorage.getItem('elegantModeEnabled') === 'true';
 
     // ====================
     // Theme Management
@@ -725,8 +851,88 @@ Current notes: ${aiNotes || "No notes yet."}`
           conversation.removeChild(thinkingElement);
           
           const aiMessageElement = document.createElement('div');
-          aiMessageElement.innerHTML = marked(aiResponseContent);
           aiMessageElement.classList.add('ai-message', 'mb-4', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
+
+          // Create a container for the AI response content
+          const contentContainer = document.createElement('div');
+          if (elegantModeEnabled) {
+            contentContainer.classList.add('markdown-output');
+          }
+          contentContainer.innerHTML = marked(aiResponseContent);
+          aiMessageElement.appendChild(contentContainer);
+
+          // Create action buttons container
+          const actionButtonsContainer = document.createElement('div');
+          actionButtonsContainer.classList.add('flex', 'gap-2', 'justify-end', 'mt-2', 'text-xs', 'text-[var(--text-secondary)]');
+
+          // Create copy button
+          const copyButton = document.createElement('button');
+          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+          copyButton.title = "Copy response";
+          copyButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
+          copyButton.addEventListener('click', () => {
+            // Strip markdown and copy plain text
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = contentContainer.innerHTML;
+            const text = tempDiv.textContent || tempDiv.innerText || "";
+            navigator.clipboard.writeText(text).then(() => {
+              addNotificationMessage('Response copied to clipboard', 'green');
+            });
+          });
+
+          // Create speak button
+          const speakButton = document.createElement('button');
+          speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+          speakButton.title = "Read aloud";
+          speakButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
+          speakButton.addEventListener('click', () => {
+            // Clean up any special syntax
+            const speechText = aiResponseContent
+              .replace(/\[\[SYSTEM:.*?\]\]/gs, '')
+              .replace(/\[\[RESPOND:.*?\]\]/gs, '')
+              .replace(/\[\[NOTE:.*?\]\]/gs, '')
+              .replace(/```[\s\S]*?```/g, 'Code block omitted for speech.')
+              .trim();
+            
+            // Cancel any ongoing speech
+            if (currentUtterance) {
+              speechSynthesis.cancel();
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(speechText);
+            speechSynthesis.speak(currentUtterance);
+            addNotificationMessage('Reading response aloud', 'blue');
+          });
+
+          // Create delete button
+          const deleteButton = document.createElement('button');
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          deleteButton.title = "Delete message";
+          deleteButton.classList.add('hover:text-red-500', 'transition-colors');
+          deleteButton.addEventListener('click', () => {
+            if (confirm('Delete this message?')) {
+              conversation.removeChild(aiMessageElement);
+              
+              // Find and remove the user message that came before this response
+              const messages = Array.from(conversation.children);
+              const aiMessageIndex = messages.indexOf(aiMessageElement);
+              if (aiMessageIndex > 0 && messages[aiMessageIndex - 1].classList.contains('user-message')) {
+                conversation.removeChild(messages[aiMessageIndex - 1]);
+              }
+              
+              addNotificationMessage('Message deleted', 'red');
+            }
+          });
+
+          // Add buttons to container
+          actionButtonsContainer.appendChild(copyButton);
+          actionButtonsContainer.appendChild(speakButton);
+          actionButtonsContainer.appendChild(deleteButton);
+
+          // Add action buttons to message
+          aiMessageElement.appendChild(actionButtonsContainer);
+
+          // Add to conversation
           conversation.appendChild(aiMessageElement);
           conversation.scrollTop = conversation.scrollHeight;
 
@@ -816,8 +1022,75 @@ Current notes: ${aiNotes || "No notes yet."}`
           userMessageElement.classList.add('user-message', 'mb-2', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
           
           const aiMessageElement = document.createElement('div');
-          aiMessageElement.innerHTML = marked(chat.aiMessage);
           aiMessageElement.classList.add('ai-message', 'mb-4', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
+
+          // Create a container for the AI response content
+          const contentContainer = document.createElement('div');
+          if (elegantModeEnabled) {
+            contentContainer.classList.add('markdown-output');
+          }
+          contentContainer.innerHTML = marked(chat.aiMessage);
+          aiMessageElement.appendChild(contentContainer);
+
+          // Create action buttons container
+          const actionButtonsContainer = document.createElement('div');
+          actionButtonsContainer.classList.add('flex', 'gap-2', 'justify-end', 'mt-2', 'text-xs', 'text-[var(--text-secondary)]');
+
+          // Copy button
+          const copyButton = document.createElement('button');
+          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+          copyButton.title = "Copy response";
+          copyButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
+          copyButton.addEventListener('click', () => {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = contentContainer.innerHTML;
+            const text = tempDiv.textContent || tempDiv.innerText || "";
+            navigator.clipboard.writeText(text);
+            addNotificationMessage('Response copied to clipboard', 'green');
+          });
+
+          // Speak button
+          const speakButton = document.createElement('button');
+          speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+          speakButton.title = "Read aloud";
+          speakButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
+          speakButton.addEventListener('click', () => {
+            const speechText = chat.aiMessage
+              .replace(/\[\[SYSTEM:.*?\]\]/gs, '')
+              .replace(/\[\[RESPOND:.*?\]\]/gs, '')
+              .replace(/\[\[NOTE:.*?\]\]/gs, '')
+              .replace(/```[\s\S]*?```/g, 'Code block omitted for speech.')
+              .trim();
+            
+            if (currentUtterance) {
+              speechSynthesis.cancel();
+            }
+            
+            currentUtterance = new SpeechSynthesisUtterance(speechText);
+            speechSynthesis.speak(currentUtterance);
+            addNotificationMessage('Reading response aloud', 'blue');
+          });
+
+          // Delete button
+          const deleteButton = document.createElement('button');
+          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          deleteButton.title = "Delete message";
+          deleteButton.classList.add('hover:text-red-500', 'transition-colors');
+          deleteButton.addEventListener('click', () => {
+            if (confirm('Delete this message?')) {
+              conversation.removeChild(userMessageElement);
+              conversation.removeChild(aiMessageElement);
+              addNotificationMessage('Message deleted', 'red');
+            }
+          });
+
+          // Add buttons to container
+          actionButtonsContainer.appendChild(copyButton);
+          actionButtonsContainer.appendChild(speakButton);
+          actionButtonsContainer.appendChild(deleteButton);
+
+          // Add action buttons to message
+          aiMessageElement.appendChild(actionButtonsContainer);
           
           conversation.appendChild(userMessageElement);
           conversation.appendChild(aiMessageElement);
@@ -1008,6 +1281,7 @@ Current notes: ${aiNotes || "No notes yet."}`
       aiSpeechEnabled = aiSpeechToggle.checked;
       aiNotes = aiNotesInput.value;
       preservedContent = preservedContentInput.value;
+      elegantModeEnabled = elegantModeToggle.checked;
 
       // Save all settings to localStorage
       localStorage.setItem('apiKey', apiKey);
@@ -1017,6 +1291,7 @@ Current notes: ${aiNotes || "No notes yet."}`
       localStorage.setItem('aiSpeechEnabled', aiSpeechEnabled);
       localStorage.setItem('aiNotes', aiNotes);
       localStorage.setItem('preservedContent', preservedContent);
+      localStorage.setItem('elegantModeEnabled', elegantModeEnabled);
 
       updateTalkButtonText();
       applet.classList.add('translate-x-full');
@@ -1094,6 +1369,7 @@ Current notes: ${aiNotes || "No notes yet."}`
       textSize = parseInt(localStorage.getItem('textSize')) || 16;
       currentTheme = localStorage.getItem('theme') || 'dark-mode';
       preservedContent = localStorage.getItem('preservedContent') || '';
+      elegantModeEnabled = localStorage.getItem('elegantModeEnabled') === 'true';
       
       // Set theme
       setTheme(currentTheme);
@@ -1131,6 +1407,7 @@ Current notes: ${aiNotes || "No notes yet."}`
       aiSpeechToggle.checked = aiSpeechEnabled;
       aiNotesInput.value = aiNotes;
       preservedContentInput.value = preservedContent;
+      elegantModeToggle.checked = elegantModeEnabled;
 
       // Initialize UI
       updateTalkButtonText();
@@ -1139,19 +1416,21 @@ Current notes: ${aiNotes || "No notes yet."}`
       // Show welcome message
       if (chatHistory.length === 0) {
         const welcomeElement = document.createElement('div');
+        welcomeElement.classList.add('markdown-output'); // Add this class
+        
         welcomeElement.innerHTML = marked(`
 # welcome to ai-nChat!
 
 ## our mission at ai-nspired
 *pragmatic, personal, private ai — as above, so below*
 
-ai-nChat gives you access to the best ai language models while keeping your conversations private and personalized.
+ai-nChat gives you access to powerful ai language models while keeping your conversations private and personalized. unlike other solutions, we're built on pragmatic principles — delivering real utility while adapting to your unique preferences over time.
 
 ### key features:
-- **model freedom**: choose from a variety of top LLMs through OpenRouter
+- **model freedom**: choose from multiple ai engines through OpenRouter
 - **complete privacy**: all data stays on your device using local storage
-- **adaptive interface**: the more you chat, the better it understands your preferences
-- **customization**: select your theme, text size, and ai response style
+- **adaptive intelligence**: automatically learns and remembers your preferences
+- **pragmatic design**: focused on utility with minimal distractions
 - **preserved content**: keep important instructions safe across conversations
 
 ### getting started:
@@ -1162,10 +1441,12 @@ ai-nChat gives you access to the best ai language models while keeping your conv
 5. start chatting!
 
 ### power tips:
+- the quality of outputs depends on your prompts — better prompts yield better results
 - use "/system" and "/respond" commands to directly update your ai's behavior
 - save important notes with the preserved content feature
 - add custom models by typing "add model" in the chat
-- try different themes by clicking the color buttons in settings
+- try different themes for different moods and environments
+- there are no limits especially when you have a system that learns from you as you learn from ai
 
 *created by [ai-nspired](https://ai-nspired.com) - where ai meets human creativity*
   `);
@@ -1185,6 +1466,17 @@ ai-nChat gives you access to the best ai language models while keeping your conv
         tokenCount -= removed.tokens;
       }
     }
+
+    // Configure marked.js options to ensure proper rendering
+    marked.setOptions({
+      renderer: new marked.Renderer(),
+      gfm: true,
+      breaks: true,
+      sanitize: false,
+      smartLists: true,
+      smartypants: true,
+      xhtml: false
+    });
   </script>
 </body>
 </html>
