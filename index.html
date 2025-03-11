@@ -1416,8 +1416,6 @@ Current notes: ${aiNotes || "No notes yet."}`
       // Show welcome message
       if (chatHistory.length === 0) {
         const welcomeElement = document.createElement('div');
-        welcomeElement.classList.add('markdown-output'); // Add this class
-        
         welcomeElement.innerHTML = marked(`
 # welcome to ai-nChat!
 
